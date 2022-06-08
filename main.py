@@ -4,6 +4,13 @@ from pygame.locals import *
 with open("data.json") as f:
     data = json.load(f)
 
+if max(data["x"]) > max(data["y"]):
+    biggestnum = max(data["x"])*1.1
+else:
+    biggestnum = max(data["y"])*1.1
+
+
+
 screenx = 800
 screeny = 800
 running = True
@@ -26,7 +33,7 @@ def drawGrid():
                 pygame.draw.rect(screen, ((10,10,10)), rect, 1)
                 squarecount += 1
     pygame.draw.lines(screen, (0,0,0), False, [(blockSize*4,0),(blockSize*4,(screeny-blockSize*4)),(blockSize*4,screeny-blockSize*4),(screenx,(screeny-blockSize*4))], 1)
-    return squarecount,blockSize*4,blockSize*5
+    return squarecount,blockSize*4,blockSize*4
     # ((x/blockSize)-3)
 
 outputdata = drawGrid()
@@ -35,8 +42,8 @@ marginx = outputdata[1]
 marginy = outputdata[2]
 
 for i in range(0,len(data["x"])):
-    pointx = (((data["x"][i]/squarecounter) * 1000) + marginx)
-    pointy = (((data["y"][i]/squarecounter) * 1000) + marginy)
+    pointx = (data["x"][i]/biggestnum)*(screenx-marginx)+marginx
+    pointy = (screeny-(data["y"][i]/biggestnum)*(screeny-marginy))-marginy
     coords.append((pointx,pointy))
 
 
@@ -57,8 +64,8 @@ while running:
     for i in range(0,len(data["x"])):
         surf = pygame.transform.rotate(original_surf, angle)   
         surfrect = surf.get_rect()
-        surfrect.centerx = (((data["x"][i]/squarecounter) * 1000) + marginx)
-        surfrect.centery = (((data["y"][i]/squarecounter) * 1000) + marginy)
+        surfrect.centerx = (data["x"][i]/biggestnum)*(screenx-marginx)+marginx
+        surfrect.centery = (screeny-(data["y"][i]/biggestnum)*(screeny-marginy))-marginy
         screen.blit(surf,(surfrect))
     pygame.draw.lines(screen,((255,0,0)),False,coords, 1)
     pygame.display.flip()
